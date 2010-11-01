@@ -1,4 +1,4 @@
-The purpose of this code is to allow for the use of PDO in an environment which you don't have administrative access to and lacks PDO or respective drivers.
+The purpose of these classes is to allow for the use of PDO in an environment which you don't have administrative access to and lacks PDO or respective drivers.
 
 Obviously this code performs no way near as well as real PDO and it is recommended if you can to upgrade the relevant packages on the system, but should that option not be available this will hopefully be of use.
 
