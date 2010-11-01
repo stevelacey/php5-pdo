@@ -24,7 +24,7 @@ class PDOStatement_mysql {
 	 *	__connection:Resource		Database connection
          *	__dbinfo:Array			Array with 4 elements used to manage connection
          *      __persistent:Boolean		Connection mode, is true on persistent, false on normal (deafult) connection
-         *      __query:String			Last query used
+         *      queryString:String			Last query used
          *      __result:Resource		Last result from last query
          *      __fetchmode:Integer		constant PDO_FETCH_* result mode
          *      __errorCode:String		Last error string code
@@ -34,7 +34,7 @@ class PDOStatement_mysql {
 	var $__connection;
 	var $__dbinfo;
 	var $__persistent = false;
-	var $__query = '';
+	var $queryString = '';
 	var $__result = null;
 	var $__fetchmode = PDO::FETCH_BOTH;
 	var $__errorCode = '';
@@ -44,13 +44,13 @@ class PDOStatement_mysql {
 	/**
 	 * Public constructor:
 	 *	Called from PDO to create a PDOStatement for this database
-         *       	new PDOStatement_sqlite( &$__query:String, &$__connection:Resource, $__dbinfo:Array )
+         *       	new PDOStatement_sqlite( &$queryString:String, &$__connection:Resource, $__dbinfo:Array )
 	 * @Param	String		query to prepare
          * @Param	Resource	database connection
          * @Param	Array		4 elements array to manage connection
 	 */
-	function PDOStatement_mysql(&$__query, &$__connection, &$__dbinfo) {
-		$this->__query = &$__query;
+	function PDOStatement_mysql(&$queryString, &$__connection, &$__dbinfo) {
+		$this->queryString = &$queryString;
 		$this->__connection = &$__connection;
 		$this->__dbinfo = &$__dbinfo;
 	}
@@ -116,7 +116,7 @@ class PDOStatement_mysql {
 	function execute($array = Array()) {
 		if(count($this->__boundParams) > 0)
 			$array = &$this->__boundParams;
-		$__query = $this->__query;
+		$queryString = $this->queryString;
 		if(count($array) > 0) {
 			foreach($array as $k => $v) {
 				if(!is_int($k) || substr($k, 0, 1) === ':') {
@@ -127,14 +127,15 @@ class PDOStatement_mysql {
 				}
 				else {
 					$parse = create_function('$v', 'return \'"\'.mysql_escape_string($v).\'"\';');
-					$__query = preg_replace("/(\?)/e", '$parse($array[$k++]);', $__query);
+					$queryString = preg_replace("/(\?)/e", '$parse($array[$k++]);', $queryString);
 					break;
 				}
 			}
 			if(isset($tempf))
-				$__query = str_replace($tempf, $tempr, $__query);
+				$queryString = str_replace($tempf, $tempr, $queryString);
 		}
-		if(is_null($this->__result = &$this->__uquery($__query)))
+		//if(is_null($this->__result = &$this->__uquery($queryString)))
+		if(is_null($this->__result = $this->__uquery($queryString)))
 			$keyvars = false;
 		else
 			$keyvars = true;
@@ -347,6 +348,8 @@ class PDOStatement_mysql {
 		}
 		return $query;
 	}
-	
+
+   function closeCursor() {
+      //return mysql_close($this->__connection);
+   }
 }
-?>

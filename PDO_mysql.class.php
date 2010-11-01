@@ -139,13 +139,15 @@ class PDO_mysql {
          * @Return	Mixed		false on error, array with all info on success
 	 */
 	function query($query) {
-		$query = @mysql_unbuffered_query($query, $this->__connection);
-		if($query) {
-			$result = Array();
-			while($r = mysql_fetch_assoc($query))
+		$query = mysql_unbuffered_query($query, $this->__connection);
+		if($query === true) {
+			$result = true;
+		} else if ($query) {
+			$result = array();
+			while($r = mysql_fetch_assoc($query)) {
 				array_push($result, $r);
-		}
-		else {
+			}
+		} else {
 			$result = false;
 			$this->__setErrors('SQLER');
 		}
