@@ -1,0 +1,11 @@
+all:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      persistent: true
+      pooling: true
+      attributes:
+        use_dql_callbacks: true
+      dsn: 'mysql-alternative-pdo:host=...;dbname=...'
+      username: 
+      password: 
